@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * Implements hook_library().
+ */
+function leaflet_markercluster_library() {
+  $libraries['leaflet_markercluster'] = array(
+    'title' => 'Leaflet Markercluster',
+    'version' => 0, // we don't have a version
+    'js' => array(
+      array(
+        'type' => 'file',
+        'data' => libraries_get_path('leaflet_markercluster') . '/dist/leaflet.markercluster.js',
+        'group' => JS_LIBRARY,
+        'preprocess' => FALSE,
+      ),
+    ),
+    'css' => array(
+      libraries_get_path('leaflet_markercluster') . '/dist/MarkerCluster.css' => array(
+        'type' => 'file',
+        'media' => 'screen',
+      ),
+      libraries_get_path('leaflet_markercluster') . '/dist/MarkerCluster.Default.css' => array(
+        'type' => 'file',
+        'media' => 'screen',
+      ),
+    ),
+  );
+
+  return $libraries;
+}
+
+function leaflet_markercluster_preprocess_leaflet_map(&$vars) {
+  drupal_add_library('leaflet_markercluster', 'leaflet_markercluster');
+  drupal_add_js(drupal_get_path('module', 'leaflet_markercluster') . '/leaflet_markercluster.drupal.js');  
+}
+
