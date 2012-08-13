@@ -29,7 +29,6 @@
         for (var key in this.map.layers) {
           var layer = this.map.layers[key];
           var map_layer = Drupal.leaflet.create_layer(layer, key);
-
           layers[key] = map_layer;
 
           // add the  layer to the map
@@ -62,7 +61,7 @@
             lMap.addLayer(lGroup);
           }
           else {
-            lFeature = leaflet_create_feature(feature);
+            lFeature = leaflet_create_feature(feature);            
             if (feature.popup) {
               lFeature.bindPopup(feature.popup, {autoPanPadding: L.point(25,25)});
             }
@@ -96,19 +95,27 @@
           lMap.attributionControl.addAttribution(this.map.attribution.text);
         }
 
+        // markers.on('clusterclick', function (a) {          
+        //   // Zoom in batches, so the user understands the zoom
+        //   var maxZoomPerClick = 4;
+        //   var currentZoom = lMap.getZoom(), toZoom = lMap.getBoundsZoom(a.layer._bounds), zoom = toZoom;
+        //   if (toZoom - currentZoom > maxZoomPerClick) {
+        //     zoom = currentZoom + maxZoomPerClick;
+        //   }
+        //   lMap.setView(L.latLngBounds(a.layer._bounds).getCenter(), zoom);
+        // });
+        
         markers.on('clusterclick', function (a) {          
-          // Zoom in batches, so the user understands the zoom
-          var maxZoomPerClick = 4;
-          var currentZoom = lMap.getZoom(), toZoom = lMap.getBoundsZoom(a.layer._bounds), zoom = toZoom;
-          if (toZoom - currentZoom > maxZoomPerClick) {
-            zoom = currentZoom + maxZoomPerClick;
-          }
-          lMap.setView(L.latLngBounds(a.layer._bounds).getCenter(), zoom);
+          a.layer.spiderfy();
         });
         
         markers.on('clustermouseover', function (a) {
           a.layer.spiderfy();          
         });
+        
+        // markers.on('mouseover', function (a) {
+        //   a.layer.openPopup();   
+        // });
 
         // add the leaflet map to our settings object to make it accessible
         this.lMap = lMap;
@@ -153,6 +160,143 @@
 
     }
   }
+
+  Drupal.leaflet = {
+
+     bounds: [],
+
+     create_layer: function (layer, key) {
+       var map_layer = new L.TileLayer(layer.urlTemplate);
+       map_layer._leaflet_id = key;
+
+       if (layer.options) {
+         for (var option in layer.options) {
+           map_layer.options[option] = layer.options[option];
+         }
+       }
+
+       // layers served from TileStream need this correction in the y coordinates
+       // TODO: Need to explore this more and find a more elegant solution
+       if (layer.type == 'tilestream') {
+         map_layer.getTileUrl = function (tilePoint, zoom) {
+           var subdomains = this.options.subdomains,
+             s = this.options.subdomains[(tilePoint.x + tilePoint.y) % subdomains.length];
+
+           return this._url
+             .replace('{z}', zoom)
+             .replace('{x}', tilePoint.x)
+             .replace('{y}', Math.pow(2, zoom) - tilePoint.y - 1);
+         }
+       }
+       return map_layer;
+     },
+
+     create_point: function(marker) {
+       var latLng = new L.LatLng(marker.lat, marker.lon);
+       this.bounds.push(latLng);
+       var lMarker;
+       if (marker.icon) {
+
+         // override applicable marker defaults
+         if (marker.icon.iconSize) {
+           icon.iconSize = new L.Point(parseInt(marker.icon.iconSize.x), parseInt(marker.icon.iconSize.y));
+         }
+         if (marker.icon.iconAnchor) {
+           icon.iconAnchor = new L.Point(parseFloat(marker.icon.iconAnchor.x), parseFloat(marker.icon.iconAnchor.y));
+         }
+         if (marker.icon.popupAnchor) {
+           icon.popupAnchor = new L.Point(parseFloat(marker.icon.popupAnchor.x), parseFloat(marker.icon.popupAnchor.y));
+         }
+         if (marker.icon.shadowUrl !== undefined) {
+           icon.shadowUrl = marker.icon.shadowUrl;
+         }
+         if (marker.icon.shadowSize) {
+           icon.shadowSize = new L.Point(parseInt(marker.icon.shadowSize.x), parseInt(marker.icon.shadowSize.y));
+         }
+
+         lMarker = new L.Marker(latLng, {icon:icon});
+       }
+       else {
+         // Use a similar style for the single point as for the clustered points
+         lMarker = L.marker(latLng, {icon: L.divIcon({ html: '<div><span>1</span></div>', className: 'marker-cluster marker-cluster-single', iconSize: L.point(30, 30) })});
+         // lMarker = new L.Marker(latLng);
+       }
+       return lMarker;
+     },
+
+     create_linestring: function(polyline) {
+       var latlngs = [];
+       for (var i = 0; i < polyline.points.length; i++) {
+         var latlng = new L.LatLng(polyline.points[i].lat, polyline.points[i].lon);
+         latlngs.push(latlng);
+         this.bounds.push(latlng);
+       }
+       return new L.Polyline(latlngs);
+     },
+
+     create_polygon: function(polygon) {
+       var latlngs = [];
+       for (var i = 0; i < polygon.points.length; i++) {
+         var latlng = new L.LatLng(polygon.points[i].lat, polygon.points[i].lon);
+         latlngs.push(latlng);
+         this.bounds.push(latlng);
+       }
+       return new L.Polygon(latlngs);
+     },
+
+     create_multipoly: function(multipoly) {
+       var polygons = [];
+       for (var x = 0; x < multipoly.component.length; x++) {
+         var latlngs = [];
+         var polygon = multipoly.component[x];
+         for (var i = 0; i < polygon.points.length; i++) {
+           var latlng = new L.LatLng(polygon.points[i].lat, polygon.points[i].lon);
+           latlngs.push(latlng);
+           this.bounds.push(latlng);
+         }
+         polygons.push(latlngs);
+       }
+       if (multipoly.multipolyline) {
+         return new L.MultiPolyline(polygons);
+       }
+       else {
+         return new L.MultiPolygon(polygons);
+       }
+     },
+
+     create_json: function(json) {
+       lJSON = new L.GeoJSON();
+
+       lJSON.on('featureparse', function (e) {
+         e.layer.bindPopup(e.properties.popup);
+
+         for (var layer_id in e.layer._layers) {
+           for (var i in e.layer._layers[layer_id]._latlngs) {
+             Drupal.leaflet.bounds.push(e.layer._layers[layer_id]._latlngs[i]);
+           }
+         }
+
+         if (e.properties.style) {
+           e.layer.setStyle(e.properties.style);
+         }
+
+         if (e.properties.leaflet_id) {
+           e.layer._leaflet_id = e.properties.leaflet_id;
+         }
+       });
+
+       lJSON.addGeoJSON(json);
+       return lJSON;
+     },
+
+     fitbounds: function(lMap) {
+       if (this.bounds.length > 0) {
+         lMap.fitBounds(new L.LatLngBounds(this.bounds));
+       }
+     }
+
+  }  
+
 
   // Change the appearance of the clusters
   L.MarkerClusterGroup.prototype._defaultIconCreateFunction = function (childCount) {
