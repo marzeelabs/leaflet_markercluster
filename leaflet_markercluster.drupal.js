@@ -45,9 +45,9 @@
         if (typeof L.MarkerClusterGroup != 'undefined') {
           var options = {
             animateAddingMarkers   : settings['animateAddingMarkers']   ||true,
-		        disableClusteringAtZoom: settings['disableClusteringAtZoom']||null,
+            disableClusteringAtZoom: settings['disableClusteringAtZoom']||null,
             maxClusterRadius       : settings['maxClusterRadius']       ||25,
-		        showCoverageOnHover    : settings['showCoverageOnHover']    ||true,
+            showCoverageOnHover    : settings['showCoverageOnHover']    ||true,
             singleMarkerMode       : settings['singleMarkerMode']       ||false,
             skipDuplicateAddTesting: settings['skipDuplicateAddTesting']||false,
             spiderfyOnMaxZoom      : settings['spiderfyOnMaxZoom']      ||true,
@@ -89,7 +89,7 @@
               lMap.addLayer(lFeature);
             }
             if (feature.popup) {
-              lFeature.bindPopup(feature.popup);
+              lFeature.bindPopup(feature.popup, {autoPanPadding: L.point(25,25)});
             }
           }
         }
@@ -112,6 +112,21 @@
           lMap.attributionControl.setPrefix(this.map.attribution.prefix);
           lMap.attributionControl.addAttribution(this.map.attribution.text);
         }
+
+        // @pvhee: these events should somehow be triggered from within Drupal, or better we allow
+        // for easy JS overrides
+        
+        // markers.on('clusterclick', function (a) {          
+        //   a.layer.spiderfy();
+        // });
+        // 
+        // markers.on('clustermouseover', function (a) {
+        //   a.layer.spiderfy();          
+        // });
+        // 
+        // markers.on('mouseover', function (a) {
+        //   a.layer.openPopup();   
+        // });
 
         // add the leaflet map to our settings object to make it accessible
         this.lMap = lMap;
@@ -155,4 +170,5 @@
 
     }
   }
+  
 })(jQuery);
