@@ -115,17 +115,17 @@
 
         // @pvhee: these events should somehow be triggered from within Drupal, or better we allow
         // for easy JS overrides
-        
-        // markers.on('clusterclick', function (a) {          
+
+        // markers.on('clusterclick', function (a) {
         //   a.layer.spiderfy();
         // });
-        // 
+        //
         // markers.on('clustermouseover', function (a) {
-        //   a.layer.spiderfy();          
+        //   a.layer.spiderfy();
         // });
-        // 
+        //
         // markers.on('mouseover', function (a) {
-        //   a.layer.openPopup();   
+        //   a.layer.openPopup();
         // });
 
         // add the leaflet map to our settings object to make it accessible
@@ -139,7 +139,7 @@
             lFeature = Drupal.leaflet.create_point(feature);
             break;
           case 'linestring':
-            lFeature = Drupal.leaflet.linestring(feature);
+            lFeature = Drupal.leaflet.create_linestring(feature);
             break;
           case 'polygon':
             lFeature = Drupal.leaflet.create_polygon(feature);
@@ -170,5 +170,5 @@
 
     }
   }
-  
+
 })(jQuery);
