@@ -46,7 +46,7 @@
           var options = {
             animateAddingMarkers   : settings['animateAddingMarkers']   ||true,
             disableClusteringAtZoom: settings['disableClusteringAtZoom']||null,
-            maxClusterRadius       : settings['maxClusterRadius']       ||25,
+            maxClusterRadius       : settings['maxClusterRadius']       ||80,
             showCoverageOnHover    : settings['showCoverageOnHover']    ||true,
             singleMarkerMode       : settings['singleMarkerMode']       ||false,
             skipDuplicateAddTesting: settings['skipDuplicateAddTesting']||false,
