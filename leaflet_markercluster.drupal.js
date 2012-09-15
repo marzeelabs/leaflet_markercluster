@@ -15,7 +15,7 @@
           return false;
         }
 
-        // load a settings object with all of our map settings
+        // load a settings object with all of our map and markercluster settings
         var settings = {};
         for (var setting in this.map.settings) {
           settings[setting] = this.map.settings[setting];
@@ -43,17 +43,8 @@
         // @RdB create a marker cluster layer if leaflet.markercluster.js is included
         var cluster_layer = null;
         if (typeof L.MarkerClusterGroup != 'undefined') {
-          var options = {
-            animateAddingMarkers   : settings['animateAddingMarkers']   ||true,
-            disableClusteringAtZoom: settings['disableClusteringAtZoom']||null,
-            maxClusterRadius       : settings['maxClusterRadius']       ||80,
-            showCoverageOnHover    : settings['showCoverageOnHover']    ||true,
-            singleMarkerMode       : settings['singleMarkerMode']       ||false,
-            skipDuplicateAddTesting: settings['skipDuplicateAddTesting']||false,
-            spiderfyOnMaxZoom      : settings['spiderfyOnMaxZoom']      ||true,
-            zoomToBoundsOnClick    : settings['zoomToBoundsOnClick']    ||true
-          }
-          cluster_layer = new L.MarkerClusterGroup(options);
+          // Note: only applicable settings will be used, remainder are ignored
+          cluster_layer = new L.MarkerClusterGroup(settings);
           lMap.addLayer(cluster_layer);
         }
 

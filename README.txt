@@ -6,17 +6,18 @@ installed before you can use Leaflet MarkerCluster.
 
 Then download the MarkerCluster library from:
 https://github.com/danzel/Leaflet.markercluster
-
 The core part of the zip file is a directory named 'dist'. Make sure this
 directory ends up in sites/all/libraries/leaflet_markercluster, so that the path
 to the essential javascript file becomes
 sites/all/libraries/leaflet_markercluster/dist/leaflet.markercluster.js
 
-Visit the Status Report page, admin/reports/status to check all's ok.
+Visit the Status Report page, admin/reports/status, to check all's ok.
 
 There are no permissions to configure.
-This module does not have a UI to set any parameters. However configuration
-parameters can be set through PHP code. See the next section.
+This module does not itself have a UI to set MarkerCluster configuration
+parameters. However parameters may be set through Drupal code as part of the
+creation of the map and will thus be passed to the underlying javascript
+library. See the section below.
 
 
 FOR PROGRAMMERS
@@ -28,8 +29,9 @@ Example:
   $map_id = 'OSM Mapnik'; // default map that comes with Leaflet
   $map = leaflet_map_get_info($map_id);
 
-  $map['settings']['zoom'] = 10; // Leaflet parameter
-  $map['settings']['maxClusterRadius'] = 50; // Leaflet MarkerCluster parameter
+  $map['settings']['zoom']                    = 10; // Leaflet parameter
+  $map['settings']['maxClusterRadius']        = 50; // Leaflet MarkerCluster parameter
+  $map['settings']['disableClusteringAtZoom'] = 2;  // Leaflet MarkerCluster parameter
 
   $features = ... // see the README.txt of the Leaflet module
 
@@ -37,7 +39,7 @@ Example:
 
 The following MarkerCluster parameters may be configured this way:
 
-  animateAddingMarkers (default: TRUE)
+  animateAddingMarkers (default: FALSE)
   disableClusteringAtZoom (NULL)
   maxClusterRadius (80)
   showCoverageOnHover (TRUE)
@@ -46,10 +48,9 @@ The following MarkerCluster parameters may be configured this way:
   spiderfyOnMaxZoom (TRUE)
   zoomToBoundsOnClick (TRUE)
 
-See the bottom reference for more info.
+See the bottom reference for an explanation of these parameters.
 
 References:
 
-o http://leaflet.cloudmade.com
 o http://leaflet.cloudmade.com/2012/08/20/guest-post-markerclusterer-0-1-released.html
 o https://github.com/danzel/Leaflet.markercluster/blob/master/README.md
