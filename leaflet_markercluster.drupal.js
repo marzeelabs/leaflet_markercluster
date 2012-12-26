@@ -53,6 +53,38 @@
             spiderfyOnMaxZoom      : settings['spiderfyOnMaxZoom']      ||true,
             zoomToBoundsOnClick    : settings['zoomToBoundsOnClick']    ||true
           }
+
+          // If we specified a custom cluster icon, use that.
+          if (this.map.markercluster_icon) {
+            var icon_settings = this.map.markercluster_icon;
+
+            options['iconCreateFunction'] = function(cluster) {
+              var icon = new L.Icon({iconUrl: icon_settings.iconUrl});
+
+              // override applicable marker defaults
+              if (icon_settings.iconSize) {
+                icon.options.iconSize = new L.Point(parseInt(icon_settings.iconSize.x), parseInt(icon_settings.iconSize.y));
+              }
+              if (icon_settings.iconAnchor) {
+                icon.options.iconAnchor = new L.Point(parseFloat(icon_settings.iconAnchor.x), parseFloat(icon_settings.iconAnchor.y));
+              }
+              if (icon_settings.popupAnchor) {
+                icon.options.popupAnchor = new L.Point(parseFloat(icon_settings.popupAnchor.x), parseFloat(icon_settings.popupAnchor.y));
+              }
+              if (icon_settings.shadowUrl !== undefined) {
+                icon.options.shadowUrl = icon_settings.shadowUrl;
+              }
+              if (icon_settings.shadowSize) {
+                icon.options.shadowSize = new L.Point(parseInt(icon_settings.shadowSize.x), parseInt(icon_settings.shadowSize.y));
+              }
+              if (icon_settings.shadowAnchor) {
+                icon.options.shadowAnchor = new L.Point(parseInt(icon_settings.shadowAnchor.x), parseInt(icon_settings.shadowAnchor.y));
+              }
+
+              return icon;
+            }
+          }
+
           cluster_layer = new L.MarkerClusterGroup(options);
           lMap.addLayer(cluster_layer);
         }
