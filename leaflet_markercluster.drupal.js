@@ -43,12 +43,12 @@
         // @RdB create a marker cluster layer if leaflet.markercluster.js is included
         var cluster_layer = null;
         if (typeof L.MarkerClusterGroup != 'undefined') {
-	        
-					// If we specified a custom cluster icon, use that.
+
+          // If we specified a custom cluster icon, use that.
           if (this.map.markercluster_icon) {
             var icon_settings = this.map.markercluster_icon;
 
-            options['iconCreateFunction'] = function(cluster) {
+            settings['iconCreateFunction'] = function(cluster) {
               var icon = new L.Icon({iconUrl: icon_settings.iconUrl});
 
               // override applicable marker defaults
@@ -74,7 +74,7 @@
               return icon;
             }
           }
-	
+
           // Note: only applicable settings will be used, remainder are ignored
           cluster_layer = new L.MarkerClusterGroup(settings);
           lMap.addLayer(cluster_layer);
