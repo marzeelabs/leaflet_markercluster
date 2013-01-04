@@ -43,6 +43,38 @@
         // @RdB create a marker cluster layer if leaflet.markercluster.js is included
         var cluster_layer = null;
         if (typeof L.MarkerClusterGroup != 'undefined') {
+	        
+					// If we specified a custom cluster icon, use that.
+          if (this.map.markercluster_icon) {
+            var icon_settings = this.map.markercluster_icon;
+
+            options['iconCreateFunction'] = function(cluster) {
+              var icon = new L.Icon({iconUrl: icon_settings.iconUrl});
+
+              // override applicable marker defaults
+              if (icon_settings.iconSize) {
+                icon.options.iconSize = new L.Point(parseInt(icon_settings.iconSize.x), parseInt(icon_settings.iconSize.y));
+              }
+              if (icon_settings.iconAnchor) {
+                icon.options.iconAnchor = new L.Point(parseFloat(icon_settings.iconAnchor.x), parseFloat(icon_settings.iconAnchor.y));
+              }
+              if (icon_settings.popupAnchor) {
+                icon.options.popupAnchor = new L.Point(parseFloat(icon_settings.popupAnchor.x), parseFloat(icon_settings.popupAnchor.y));
+              }
+              if (icon_settings.shadowUrl !== undefined) {
+                icon.options.shadowUrl = icon_settings.shadowUrl;
+              }
+              if (icon_settings.shadowSize) {
+                icon.options.shadowSize = new L.Point(parseInt(icon_settings.shadowSize.x), parseInt(icon_settings.shadowSize.y));
+              }
+              if (icon_settings.shadowAnchor) {
+                icon.options.shadowAnchor = new L.Point(parseInt(icon_settings.shadowAnchor.x), parseInt(icon_settings.shadowAnchor.y));
+              }
+
+              return icon;
+            }
+          }
+	
           // Note: only applicable settings will be used, remainder are ignored
           cluster_layer = new L.MarkerClusterGroup(settings);
           lMap.addLayer(cluster_layer);
@@ -90,10 +122,16 @@
           lMap.addControl(new L.Control.Layers(layers, overlays));
         }
 
-        // either center the map or set to bounds
+        // center the map
         if (this.map.center) {
           lMap.setView(new L.LatLng(this.map.center.lat, this.map.center.lon), this.map.settings.zoom);
         }
+        // if we have provided a zoom level, then use it after fitting bounds
+        else if (this.map.settings.zoom) {
+          Drupal.leaflet.fitbounds(lMap);
+          lMap.setZoom(this.map.settings.zoom);
+        }
+        // fit to bounds
         else {
           Drupal.leaflet.fitbounds(lMap);
         }
@@ -103,21 +141,6 @@
           lMap.attributionControl.setPrefix(this.map.attribution.prefix);
           lMap.attributionControl.addAttribution(this.map.attribution.text);
         }
-
-        // @pvhee: these events should somehow be triggered from within Drupal, or better we allow
-        // for easy JS overrides
-
-        // markers.on('clusterclick', function (a) {
-        //   a.layer.spiderfy();
-        // });
-        //
-        // markers.on('clustermouseover', function (a) {
-        //   a.layer.spiderfy();
-        // });
-        //
-        // markers.on('mouseover', function (a) {
-        //   a.layer.openPopup();
-        // });
 
         // add the leaflet map to our settings object to make it accessible
         this.lMap = lMap;
