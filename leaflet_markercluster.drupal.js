@@ -100,7 +100,11 @@
             // add the group to the layer switcher
             overlays[feature.label] = lGroup;
 
-            lMap.addLayer(lGroup);
+            if (cluster_layer) {
+              cluster_layer.addLayer(lGroup);
+            } else {
+              lMap.addLayer(lGroup);
+            }
           }
           else {
             lFeature = leaflet_create_feature(feature);
