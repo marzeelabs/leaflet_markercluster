@@ -5,6 +5,8 @@
 
 (function ($) {
 
+  var LEAFLET_MARKERCLUSTER_EXCLUDE_FROM_CLUSTER = 0x01;
+
   Drupal.behaviors.leaflet = { // overrides same behavior in leaflet/leaflet.drupal.js
     attach: function(context, settings) {
 
@@ -83,6 +85,7 @@
         // add features
         for (i = 0; i < this.features.length; i++) {
           var feature = this.features[i];
+          var cluster = (feature.type == 'point') && (!feature.flags || !(feature.flags & LEAFLET_MARKERCLUSTER_EXCLUDE_FROM_CLUSTER));
           var lFeature;
 
           // dealing with a layer group
@@ -100,7 +103,7 @@
             // add the group to the layer switcher
             overlays[feature.label] = lGroup;
 
-            if (cluster_layer) {
+            if (cluster_layer && cluster)  {
               cluster_layer.addLayer(lGroup);
             } else {
               lMap.addLayer(lGroup);
@@ -109,7 +112,7 @@
           else {
             lFeature = leaflet_create_feature(feature);
             // @RdB add to cluster layer if one is defined, else to map
-            if (cluster_layer) {
+            if (cluster_layer && cluster) {
               cluster_layer.addLayer(lFeature);
             }
             else {
