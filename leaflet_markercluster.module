@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Implements hook_library().
+ * Implements hook_library_info().
  */
-function leaflet_markercluster_library() {
+function leaflet_markercluster_library_info() {
 
   if (!($path = leaflet_markercluster_get_library_path())) {
     return NULL;
@@ -39,7 +39,6 @@ function leaflet_markercluster_preprocess_leaflet_map(&$vars) {
   drupal_add_js(drupal_get_path('module', 'leaflet_markercluster') . '/leaflet_markercluster.drupal.js');
 }
 
-
 /**
  * Implements hook_requirements().
  */
@@ -66,6 +65,10 @@ function leaflet_markercluster_requirements($phase) {
 }
 
 function leaflet_markercluster_get_library_path() {
-  $path = libraries_get_path('leaflet_markercluster');
-  return $path ? "$path/dist" : FALSE;
+  if (module_exists('libraries')) {
+    $path = libraries_get_path('leaflet_markercluster');
+    return $path ? "$path/dist" : FALSE;
+  }
+  // Hard-coded fallback when Libraries module isn't enabled.
+  return 'sites/all/libraries/leaflet_markercluster/dist';
 }

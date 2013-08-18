@@ -11,26 +11,30 @@
     attach: function(context, settings) {
 
       $(settings.leaflet).each(function () {
+
+       for (var m in this) {
+
         // bail if the map already exists
-        var container = L.DomUtil.get(this.mapId);
+        var container = L.DomUtil.get(this[m].mapId);
         if (container._leaflet) {
           return false;
         }
+        var thismap = this[m].map;
 
         // load a settings object with all of our map and markercluster settings
         var settings = {};
-        for (var setting in this.map.settings) {
-          settings[setting] = this.map.settings[setting];
+        for (var setting in thismap.settings) {
+          settings[setting] = thismap.settings[setting];
         }
 
         // instantiate our new map
-        var lMap = new L.Map(this.mapId, settings);
+        var lMap = new L.Map(this[m].mapId, settings);
 
         // add map layers
         var layers = {}, overlays = {};
         var i = 0;
-        for (var key in this.map.layers) {
-          var layer = this.map.layers[key];
+        for (var key in thismap.layers) {
+          var layer = thismap.layers[key];
           var map_layer = Drupal.leaflet.create_layer(layer, key);
 
           layers[key] = map_layer;
@@ -47,8 +51,8 @@
         if (typeof L.MarkerClusterGroup != 'undefined') {
 
           // If we specified a custom cluster icon, use that.
-          if (this.map.markercluster_icon) {
-            var icon_settings = this.map.markercluster_icon;
+          if (thismap.markercluster_icon) {
+            var icon_settings = thismap.markercluster_icon;
 
             settings['iconCreateFunction'] = function(cluster) {
               var icon = new L.Icon({iconUrl: icon_settings.iconUrl});
@@ -83,8 +87,8 @@
         }
 
         // add features
-        for (i = 0; i < this.features.length; i++) {
-          var feature = this.features[i];
+        for (i = 0; i < this[m].features.length; i++) {
+          var feature = this[m].features[i];
           var cluster = (feature.type == 'point') && (!feature.flags || !(feature.flags & LEAFLET_MARKERCLUSTER_EXCLUDE_FROM_CLUSTER));
           var lFeature;
 
@@ -128,18 +132,18 @@
         }
 
         // add layer switcher
-        if (this.map.settings.layerControl) {
+        if (thismap.settings.layerControl) {
           lMap.addControl(new L.Control.Layers(layers, overlays));
         }
 
         // center the map
-        if (this.map.center) {
-          lMap.setView(new L.LatLng(this.map.center.lat, this.map.center.lon), this.map.settings.zoom);
+        if (thismap.center) {
+          lMap.setView(new L.LatLng(thismap.center.lat, thismap.center.lon), thismap.settings.zoom);
         }
         // if we have provided a zoom level, then use it after fitting bounds
-        else if (this.map.settings.zoom) {
+        else if (thismap.settings.zoom) {
           Drupal.leaflet.fitbounds(lMap);
-          lMap.setZoom(this.map.settings.zoom);
+          lMap.setZoom(thismap.settings.zoom);
         }
         // fit to bounds
         else {
@@ -147,16 +151,21 @@
         }
 
         // add attribution
-        if (this.map.settings.attributionControl && this.map.attribution) {
-          lMap.attributionControl.setPrefix(this.map.attribution.prefix);
-          lMap.attributionControl.addAttribution(this.map.attribution.text);
+        if (thismap.settings.attributionControl && thismap.attribution) {
+          lMap.attributionControl.setPrefix(thismap.attribution.prefix);
+          lMap.attributionControl.addAttribution(thismap.attribution.text);
         }
 
         // add the leaflet map to our settings object to make it accessible
-        this.lMap = lMap;
+        this[m].lMap = lMap;
+
+        // allow other modules to get access to the map object using jQuery's trigger method
+        $(document).trigger('leaflet.map', [thismap, lMap]);
+
         // Destroy features so that an AJAX reload does not get parts of the old set.
         // Required when the View has "Use AJAX" set to Yes.
-        this.features = null;
+        this[m].features = null;
+       }
       });
 
       function leaflet_create_feature(feature) {

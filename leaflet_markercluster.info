@@ -1,4 +1,0 @@
-name = Leaflet Markercluster
-description = Extend Leaflet with the Markercluster library
-core = 7.x
-dependencies[] = leaflet
