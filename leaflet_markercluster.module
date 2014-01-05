@@ -28,6 +28,12 @@ function leaflet_markercluster_library() {
         'type' => 'file',
         'media' => 'screen',
       ),
+      "$path/MarkerCluster.Default.ie.css" => array(
+        'type' => 'file',
+        'media' => 'screen',
+        'every_page' => TRUE,
+        'browsers' => array('IE' => 'lte IE 8', '!IE' => FALSE, 'preprocess' => FALSE),
+      ),
     ),
   );
 
