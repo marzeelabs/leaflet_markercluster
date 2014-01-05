@@ -10,7 +10,7 @@ function leaflet_markercluster_library() {
   }
   $libraries['leaflet_markercluster'] = array(
     'title' => 'Leaflet Markercluster',
-    'version' => 0, // we don't have a version
+    'version' => 0.4,
     'js' => array(
       array(
         'type' => 'file',
