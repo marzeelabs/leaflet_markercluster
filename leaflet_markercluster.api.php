@@ -11,7 +11,7 @@
  * For the default attributes to define in this hook, see leaflet.api.php
  */
 function hook_leaflet_map_info_alter(&$maps) {
-  // See https://github.com/danzel/Leaflet.markercluster for all options
+  // See https://github.com/Leaflet/Leaflet.markercluster for all options
   $maps['OSM Mapnik']['settings'] += array(
     'zoomToBoundsOnClick' => TRUE, // When you mouse over a cluster it shows the bounds of its markers.
     'showCoverageOnHover' => TRUE, // When you click a cluster we zoom to its bounds.
