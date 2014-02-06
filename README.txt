@@ -53,4 +53,4 @@ See the bottom reference for an explanation of these parameters.
 References:
 
 o http://leaflet.cloudmade.com/2012/08/20/guest-post-markerclusterer-0-1-released.html
-o https://github.com/danzel/Leaflet.markercluster/blob/master/README.md
+o https://github.com/Leaflet/Leaflet.markercluster/blob/master/README.md
