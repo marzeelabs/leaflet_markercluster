@@ -31,6 +31,10 @@ function hook_leaflet_map_info_alter(&$maps) {
     // The maximum radius that a cluster will cover from the central marker
     // (in pixels). Default 80. Decreasing will make more smaller clusters.
     'maxClusterRadius' => 80,
+    // Add tooltips to each cluster showing the region the cluster is in and its
+    // subregions. Requires you to pass in a region hierarchy on each marker.
+    // See module drupal.org/project/ip_geoloc for details.
+    'addRegionToolTips' => TRUE,
   );
 
   // Adding a custom cluster icon. This overwrites the standard cluster icons 
