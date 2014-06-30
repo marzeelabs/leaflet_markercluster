@@ -9,6 +9,7 @@
 
   Drupal.behaviors.leaflet = { // overrides same behavior in leaflet/leaflet.drupal.js
     attach: function(context, settings) {
+      var start = (new Date()).getTime();
 
       $(settings.leaflet).each(function () {
         // bail if the map already exists
@@ -218,6 +219,8 @@
         return lFeature;
       }
 
+      var renderTime = (new Date()).getTime() - start;
+      console.log('leaflet_markercluster.drupal.js render time: ' + renderTime/1000 + ' s');
     }
   };
 
