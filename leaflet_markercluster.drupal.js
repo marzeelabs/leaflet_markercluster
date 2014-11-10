@@ -253,8 +253,10 @@
         return lFeature;
       }
 
-      var renderTime = (new Date()).getTime() - start;
-      console.log('leaflet_markercluster.drupal.js render time: ' + renderTime/1000 + ' s');
+      if (console) {
+        //var renderTime = (new Date()).getTime() - start;
+        //console.log('leaflet_markercluster.drupal.js render time: ' + renderTime/1000 + ' s');
+      }
     }
   };
 
