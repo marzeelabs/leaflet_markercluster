@@ -253,10 +253,10 @@
         return lFeature;
       }
 
-      //if (console) { // Does not work on IE8
-        //var renderTime = (new Date()).getTime() - start;
-        //console.log('leaflet_markercluster.drupal.js render time: ' + renderTime/1000 + ' s');
-      //}
+      if (window.console && window.console.log) { // Does not work on IE8
+        var renderTime = (new Date()).getTime() - start;
+        window.console.log('leaflet_markercluster.drupal.js render time: ' + renderTime/1000 + ' s');
+      }
     }
   };
 
