@@ -238,6 +238,9 @@
           case 'circle':
             lFeature = Drupal.leaflet.create_circle(feature, lMap);
             break;
+          case 'circlemarker':
+            lFeature = Drupal.leaflet.create_circlemarker(feature, lMap);
+            break;
         }
 
         // assign our given unique ID, useful for associating nodes
