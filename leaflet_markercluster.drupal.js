@@ -120,7 +120,8 @@
         for (i = 0; i < this.features.length; i++) {
           var feature = this.features[i];
          
-          var cluster = (feature.type === 'point') && (!feature.flags || !(feature.flags & LEAFLET_MARKERCLUSTER_EXCLUDE_FROM_CLUSTER));
+          var cluster = (feature.type === 'point' || feature.type === 'json') &&
+            (!feature.flags || !(feature.flags & LEAFLET_MARKERCLUSTER_EXCLUDE_FROM_CLUSTER));
           if (cluster) {
             var clusterGroup = feature.clusterGroup ? feature.clusterGroup : 'global';
             if (!clusterLayers[clusterGroup]) {
