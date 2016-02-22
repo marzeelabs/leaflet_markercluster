@@ -9,6 +9,8 @@
  * Add extra options for Leaflet Markercluster, using hooks provided by Leaflet
  *
  * For the default attributes to define in this hook, see leaflet.api.php
+ *
+ * @todo  this needs to be updated for 8.x-1.x
  */
 function hook_leaflet_map_info_alter(&$maps) {
   // See https://github.com/danzel/Leaflet.markercluster for all options

@@ -1,51 +1,26 @@
 <?php
 
 /**
- * Implements hook_library_info().
+ * Preprocess the leaflet_map theme function to add
+ * the markercluster libraries.
+ *
+ * @param  [type] &$vars [description]
+ * @return [type]        [description]
  */
-function leaflet_markercluster_library_info() {
-
-  if (!($path = leaflet_markercluster_get_library_path())) {
-    return NULL;
-  }
-  $libraries['leaflet_markercluster'] = array(
-    'title' => 'Leaflet Markercluster',
-    'version' => 0, // we don't have a version
-    'js' => array(
-      array(
-        'type' => 'file',
-        'data' => "$path/leaflet.markercluster.js",
-        'group' => JS_LIBRARY,
-        'preprocess' => FALSE,
-      ),
-    ),
-    'css' => array(
-      "$path/MarkerCluster.css" => array(
-        'type' => 'file',
-        'media' => 'screen',
-      ),
-      "$path/MarkerCluster.Default.css" => array(
-        'type' => 'file',
-        'media' => 'screen',
-      ),
-    ),
-  );
-
-  return $libraries;
-}
-
 function leaflet_markercluster_preprocess_leaflet_map(&$vars) {
-  drupal_add_library('leaflet_markercluster', 'leaflet_markercluster');
-  drupal_add_js(drupal_get_path('module', 'leaflet_markercluster') . '/leaflet_markercluster.drupal.js');
+  $vars['#attached']['library'] = array(
+    'leaflet_markercluster/leaflet-markercluster',
+    'leaflet_markercluster/leaflet-markercluster-drupal',
+  );
 }
 
 /**
  * Implements hook_requirements().
  */
 function leaflet_markercluster_requirements($phase) {
-
+  $requirements = array();
   if ($phase != 'runtime') {
-    return array();
+    return $requirements;
   }
   $requirements['leaflet_markercluster']['title'] = t('Leaflet MarkerCluster library');
   if ($path = leaflet_markercluster_get_library_path()) {

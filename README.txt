@@ -6,14 +6,15 @@ installed before you can use Leaflet MarkerCluster.
 
 Then download the MarkerCluster library from:
 https://github.com/danzel/Leaflet.markercluster
+
 The core part of the zip file is a directory named 'dist'. Make sure this
-directory ends up in sites/all/libraries/leaflet_markercluster, so that the path
-to the essential javascript file becomes
-sites/all/libraries/leaflet_markercluster/dist/leaflet.markercluster.js
+directory ends up in libraries/leaflet_markercluster, so that the path
+to the essential javascript file becomes libraries/leaflet_markercluster/dist/leaflet.markercluster.js
 
 Visit the Status Report page, admin/reports/status, to check all's ok.
 
 There are no permissions to configure.
+
 This module does not itself have a UI to set MarkerCluster configuration
 parameters. However parameters may be set through Drupal code as part of the
 creation of the map and will thus be passed to the underlying javascript
@@ -22,6 +23,7 @@ library. See the section below.
 
 FOR PROGRAMMERS
 ===============
+
 You can set Leaflet MarkerCluster parameters in the same way that you set
 Leaflet map parameters.
 Example:
