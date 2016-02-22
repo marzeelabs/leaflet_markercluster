@@ -22,28 +22,35 @@ function leaflet_markercluster_requirements($phase) {
   if ($phase != 'runtime') {
     return $requirements;
   }
-  $requirements['leaflet_markercluster']['title'] = t('Leaflet MarkerCluster library');
-  if ($path = leaflet_markercluster_get_library_path()) {
-    $file = "$path/leaflet.markercluster.js";
-  }
-  if ($path && file_exists($file)) {
-    $requirements['leaflet_markercluster']['value'] = t('Installed');
+  $library = Drupal::service('library.discovery')
+    ->getLibraryByName('leaflet_markercluster', 'leaflet-markercluster');
+
+  $requirements['leaflet_markercluster'] = array(
+    'title' => Drupal::translation()->translate('Leaflet Markercluster library')
+  );
+
+  dsm($library);
+
+  if (file_exists($library['js'][0]['data'])) {
+    $requirements['leaflet_markercluster']['value'] = Drupal::translation()
+        ->translate('Leaflet Markercluster @version library installed at @path.', array(
+          '@version' => $library['version'],
+          '@path' => $library['js'][0]['data'],
+        ));
     $requirements['leaflet_markercluster']['severity'] = REQUIREMENT_OK;
   }
   else {
-    $requirements['leaflet_markercluster']['value'] =
-      $path ? t('File not found: %file', array('%file' => $file)) : t('/leaflet_markercluster library directory missing');
+    $requirements['leaflet_markercluster']['value'] = Drupal::translation()
+      ->translate('Leaflet Markecluster @version library not found at @path. Please !download it to @directory.',
+        array(
+          '@version' => $library['version'],
+          '@path' => $library['js'][0]['data'],
+          '@directory' => dirname($library['js'][0]['data']),
+          '!download' => Drupal::l('download', Drupal\Core\Url::fromUri($library['remote'])),
+        )
+      );
     $requirements['leaflet_markercluster']['severity'] = REQUIREMENT_ERROR;
   }
 
   return $requirements;
-}
-
-function leaflet_markercluster_get_library_path() {
-  if (module_exists('libraries')) {
-    $path = libraries_get_path('leaflet_markercluster');
-    return $path ? "$path/dist" : FALSE;
-  }
-  // Hard-coded fallback when Libraries module isn't enabled.
-  return 'sites/all/libraries/leaflet_markercluster/dist';
 }
