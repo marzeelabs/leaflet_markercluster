@@ -29,8 +29,6 @@ function leaflet_markercluster_requirements($phase) {
     'title' => Drupal::translation()->translate('Leaflet Markercluster library')
   );
 
-  dsm($library);
-
   if (file_exists($library['js'][0]['data'])) {
     $requirements['leaflet_markercluster']['value'] = Drupal::translation()
         ->translate('Leaflet Markercluster @version library installed at @path.', array(
