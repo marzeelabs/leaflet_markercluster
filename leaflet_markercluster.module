@@ -8,10 +8,8 @@
  * @return [type]        [description]
  */
 function leaflet_markercluster_preprocess_leaflet_map(&$vars) {
-  $vars['#attached']['library'] = array(
-    'leaflet_markercluster/leaflet-markercluster',
-    'leaflet_markercluster/leaflet-markercluster-drupal',
-  );
+  $vars['#attached']['library'][] = 'leaflet_markercluster/leaflet-markercluster';
+  $vars['#attached']['library'][] = 'leaflet_markercluster/leaflet-markercluster-drupal';
 }
 
 /**
